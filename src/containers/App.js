@@ -1,55 +1,53 @@
 import React, { Component } from 'react'
-import CardList from '../components/CardList'
+import CardList from "../components/CardList"
 import SearchBox from '../components/SearchBox'
 import Scroll from '../components/Scroll'
+import ErrorBoundry from '../components/ErrorBoundary'
+// import { robots } from './robots'
 import './App.css'
 
-class App extends Component {
-    constructor() {
-        super()
-    //    Declare the state within constructor
-    //Something that can change the app and lives in the parent component
-        this.state = {
-            robots: [],
-            searchfield: ''
-        }
-    }
 
-    componentDidMount() {
-        //fetch is a tool on the window object that allows us to make requests
-        fetch('https://jsonplaceholder.typicode.com/users').then(res => res.json())
-        //update state after fetch
-        .then(users => this.setState({robots: users}))
+class App extends Component {
+  constructor () {
+    super()
+    // declare state here / Smart components use CLASS syntax
+    this.state = {
+      robots: [],
+      searchfield: ''
     }
-    //onSearchChange method to get user input
-    onSearchChange = (event) => {
-        //updates state searchfield to users input
-        this.setState({ searchfield: event.target.value})
-    }
-    render() {
-        //destructure properties to access within this.state
-        const {robots, searchfield} = this.state
-        //filter into new array the robots based on the searchfield state
-        const filteredRobots = robots.filter(robot => {
-            return robot.name.toLowerCase().includes(searchfield.toLowerCase())
-        })
-        //add loading message if 'fetch' is still retrieving data
-        //ternary operator to return 
-        // if there is no length in array
-        return (!robots.length) ?
-            <h1 className="tc">Loading Robots...</h1> :
-            (
-        //else if has length then return
-            <div className="tc">
-            <h1 className="f1">RoboFriends</h1>
-            {/* Scrollable component */}
-            {/* SearchBox has prop of searchChange method*/}
-            <SearchBox searchChange={this.onSearchChange}/>
-            <Scroll>
-            <CardList robots={filteredRobots}/>
-            </Scroll>
-            </div>
-        )
-    }
+  }
+  componentDidMount () {
+    fetch( 'https://jsonplaceholder.typicode.com/users' )
+      .then( response => response.json() )
+      .then( users => this.setState( { robots: users } ) )
+  }
+
+  onSearchChange = ( event ) => {
+    this.setState( { searchfield: event.target.value } )
+  }
+
+  render () {
+    const { robots, searchfield } = this.state;  // destructuring this.state to access properties
+    const filteredRobots = robots.filter( robot => {
+      return robot.name.toLowerCase().includes( searchfield.toLowerCase() )
+    } )
+
+    // loading screen in case fetch takes too long
+    return ( !robots.length ) ?
+      <h1>Loading...</h1> :
+      (
+        <div className="tc" >
+          <h1 className="f1 white">RoboFriends</h1>
+          <SearchBox searchChange={this.onSearchChange} />
+          <Scroll>
+            <ErrorBoundry>
+              <CardList robots={filteredRobots} />
+            </ErrorBoundry>
+          </Scroll>
+        </div>
+      )
+
+  }
+
 }
 export default App

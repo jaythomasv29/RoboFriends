@@ -1,15 +1,24 @@
-import React, {Fragment} from 'react'
+import React from 'react';
 import Card from './Card'
 
-const CardList = ({robots}) => {
-    const cardArray = robots.map((element, i) => {
-        //key property is used to identify specific Card component
-       return <Card key={element.id} id={element.id} name={element.name} email={element.email}/>
-    })
-    return (
-        <Fragment>
-        {cardArray}
-        </Fragment>       
-    )
+const CardList = ( { robots } ) => {
+  return (
+    <div>
+
+      {
+        robots.map( ( user, i ) => {
+          return (
+            <Card
+              key={i}
+              id={robots[ i ].id}
+              name={robots[ i ].name}
+              email={robots[ i ].email}
+            />
+          )
+        } )
+      }
+    </div>
+  )
 }
+
 export default CardList
